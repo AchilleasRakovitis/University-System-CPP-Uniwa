@@ -55,7 +55,7 @@ void Course::setCourseID(const char * courseID){
         this->courseID[0] = '\0';
     }else{
         if(this->courseID){
-            delete[] this->courseID;  // ✅ Delete the existing memory
+            delete[] this->courseID; 
         }
         this->courseID = new char[strlen(courseID) + 1];
         strcpy(this->courseID, courseID);
