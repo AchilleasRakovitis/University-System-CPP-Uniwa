@@ -1,3 +1,6 @@
+#ifndef COURSE_H
+#define COURSE_H
+
 #include <string>
 
 class Course{
@@ -19,10 +22,12 @@ public:
     void setCourseName(const std::string& );
     void setCourseSemester(int );
     void setProfName(const std::string& );
-    //getters
+    //getters   
     const char * getCourseID() const;
     const std::string& getCourseName() const;
     int getCourseSemester() const;
     const std::string& getProfName() const;
 
 };
+
+#endif
