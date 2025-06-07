@@ -85,6 +85,10 @@ Person::~Person(){
     }
 }
 
+Person* Person::clone() const{
+    return new Person(*this);
+}
+
 void Person::setID(const char *ID) {
     if(ID == nullptr) {
         this->ID = new char[1];

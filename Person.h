@@ -21,7 +21,9 @@ public:
     Person(const std::string&, const std::string&, const std::string&, const std::string& );
     
     Person(const Person& other); // copy constructor 
-    ~Person(); //destructor 
+    virtual ~Person(); //destructor 
+    virtual Person* clone() const;
+
     //setters
     void setID(const char *);
     void setName(const std::string& );
