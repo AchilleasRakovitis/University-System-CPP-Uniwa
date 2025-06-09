@@ -17,12 +17,14 @@ public:
             const std::string& email, float height,
             const char *AM, int semester, int declaredCourses);
     Student(const Student& other );
+    virtual Person* clone() const override;
     ~Student();
     
     void setAM(const char * );
     void setSemester(int );
     void setDeclaredCourses(int );
     const char* getAM() const;
+    const char* getId() const override;
     int getSemester() const;
     int getDeclaredCourses() const;
 };

@@ -14,11 +14,13 @@ class Professor : public Person{
             const std::string& email, float height,
             const char *profID, const std::string& specialty);
         Professor(const Professor& other );
+        virtual Person * clone() const override;
         ~Professor();
 
         void setProfID(const char * );
         void setSpecialty(const std::string& );
         const char * getProfID() const; 
+        const char * getId() const override;
         const std::string& getSpecialty() const;
 };
 

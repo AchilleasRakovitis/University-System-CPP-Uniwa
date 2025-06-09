@@ -38,11 +38,14 @@ Professor::Professor(const Professor& other) : Person(other){
     this->specialty = other.specialty;
 }
 
+Person* Professor::clone() const{
+    return new Professor(*this);
+}
+
 Professor::~Professor(){
     if(this->profID != nullptr){
         delete[] profID;
     }
-    this->profID = nullptr;
 }
 
 void Professor::setProfID(const char * profID){
@@ -70,6 +73,11 @@ void Professor::setSpecialty(const string& specialty){
 }
 
 const char * Professor::getProfID() const{
+    return this->profID;
+}
+
+// for polymorhism
+const char * Professor::getId() const{
     return this->profID;
 }
 

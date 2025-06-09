@@ -33,7 +33,7 @@ public:
     void setEmail(const std::string& );
     void setHeight(float);
     //getters
-    const char* getId() const;
+    virtual const char* getId() const;
     const std::string& getName() const;
     int getBirthYear() const;
     const std::string& getStreet() const;

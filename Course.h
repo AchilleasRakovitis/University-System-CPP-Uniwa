@@ -16,6 +16,7 @@ public:
     //constructors
     Course(const char *, const std::string&, int, const std::string& );
     Course(const Course& other); // copy constructor 
+    Course* clone() const;
     ~Course(); // destructor 
     //setters
     void setCourseID(const char * );

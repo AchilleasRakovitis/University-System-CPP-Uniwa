@@ -50,11 +50,14 @@ Student::Student(const Student& other) : Person(other) {
     this->declaredCourses = other.declaredCourses;
 }
 
+Person * Student::clone() const {
+    return new Student(*this);
+}
+
 Student::~Student(){
     if(this->AM != nullptr){
         delete[] this->AM;
     }
-    this->AM = nullptr;
 }
 
 void Student::setAM(const char *AM){
@@ -93,10 +96,15 @@ void Student::setDeclaredCourses(int declaredCourses){
         this->declaredCourses = declaredCourses;
     }else{
         cout << "Too many declared courses" << endl;
+        this->declaredCourses = 9;
     }
 }
 
 const char * Student::getAM() const{
+    return this->AM;
+}
+
+const char * Student::getId() const{
     return this->AM;
 }
 

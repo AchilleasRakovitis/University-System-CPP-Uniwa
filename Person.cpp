@@ -90,15 +90,15 @@ Person* Person::clone() const{
 }
 
 void Person::setID(const char *ID) {
+    if(this->ID){
+        delete[] this->ID;
+    }
     if(ID == nullptr) {
         this->ID = new char[1];
         this->ID[0] = '\0'; // initialize to empty string 
     }else{
-        if(this->ID){
-            delete[] this->ID; //delete garbage 
-        }
-        this->ID = new char[strlen(ID) + 1];
-        strcpy(this->ID, ID);
+    this->ID = new char[strlen(ID) + 1];
+    strcpy(this->ID, ID);
     }
 }
 

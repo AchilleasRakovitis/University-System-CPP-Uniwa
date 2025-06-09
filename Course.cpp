@@ -40,6 +40,10 @@ Course::Course(const Course& other){
     this->profName = other.profName;
 }
 
+Course * Course::clone() const{
+    return new Course(*this);
+}
+
 Course::~Course(){
     if(this->courseID != nullptr){
         delete[] courseID;

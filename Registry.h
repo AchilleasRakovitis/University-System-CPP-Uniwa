@@ -37,9 +37,15 @@ class Registry{
         bool addGrade(const char *AM, float grade, const char *courseID);
         bool updateGrade(const char*AM, float updatedGrade, const char *courseID);
         
+        //save to CSV files
         bool savePeopleToCSV(const std::string& csvfile) const;
-        bool saveCoursesToCSV(const std::string& csvfile2) const;
-        bool saveGradesTOCSV(const std::string& csvfile3) const;
+        bool saveCoursesToCSV(const std::string& csvfile) const;
+        bool saveGradesToCSV(const std::string& csvfile) const;
+
+        //load from CSV files
+        bool loadPeopleFromCSV(const std::string& csvfile);
+        bool loadCoursesFromCSV(const std::string& csvfile);
+        bool loadGradesFromCSV(const std::string& csvfile);
 };
 
 
