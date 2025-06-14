@@ -85,6 +85,8 @@ Person::~Person(){
     }
 }
 
+//Επιστρέφει αντικείμενο Person αν ο δείκτης δείχνει σε Person 
+// θα χρησιμοποιηθεί στον copy constructor του φοιτητολογίου
 Person* Person::clone() const{
     return new Person(*this);
 }
@@ -165,6 +167,10 @@ float Person::getHeight() const{
 
 int Person::returnAge() const {
     return 2025 - this->birthYear;
+}
+
+void Person::sendEmail() const {
+    // Does nothing, just for polymorphism
 }
 
 

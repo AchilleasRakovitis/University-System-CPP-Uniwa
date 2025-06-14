@@ -22,7 +22,7 @@ public:
     
     Person(const Person& other); // copy constructor 
     virtual ~Person(); //destructor 
-    virtual Person* clone() const;
+    virtual Person* clone() const; // πολυμορφισμος για να δουλεψει ο copy constructor για καθε τυπο
 
     //setters
     void setID(const char *);
@@ -33,7 +33,7 @@ public:
     void setEmail(const std::string& );
     void setHeight(float);
     //getters
-    virtual const char* getId() const;
+    virtual const char* getId() const; // για πολυμορφισμο
     const std::string& getName() const;
     int getBirthYear() const;
     const std::string& getStreet() const;
@@ -42,6 +42,7 @@ public:
     float getHeight() const;
     //general methods
     int returnAge() const;
+    virtual void sendEmail() const {}  // Virtual empty method for polymorphic email sending
     
 };
 

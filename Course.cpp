@@ -40,6 +40,7 @@ Course::Course(const Course& other){
     this->profName = other.profName;
 }
 
+//ίδιο με την λειτουργία στις άλλες κλάσεις
 Course * Course::clone() const{
     return new Course(*this);
 }

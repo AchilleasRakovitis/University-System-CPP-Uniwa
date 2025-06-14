@@ -70,3 +70,48 @@ bool Registry::deletePerson(const char* ID){
     }
     return false;
 }
+
+bool Registry::updateCourse(const char * courseID, const string& newName, int newSemester, const string& newProfName) {
+    if(courseID == nullptr){ 
+    return false;
+    }
+
+    for(int i = 0; i < courses.size(); ++i){
+        if(strcmp(courses[i]->getCourseID(), courseID) == 0){
+            courses[i]->setCourseName(newName);
+            courses[i]->setCourseSemester(newSemester);
+            courses[i]->setProfName(newProfName);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Registry::updatePerson(const char* ID, const std::string& newName, int newBirthYear, const std::string& newStreet, const std::string& newTelephoneNumber, const std::string& newEmail, float newHeight) {
+
+    if(ID == nullptr){
+        return false;
+    }
+
+    for(int i = 0; i<uniMembers.size(); ++i){
+        if(strcmp(uniMembers[i]->getId(), ID) == 0){
+            uniMembers[i]->setName(newName);
+            uniMembers[i]->setBirthYear(newBirthYear);
+            uniMembers[i]->setEmail(newEmail);
+            uniMembers[i]->setStreet(newStreet);
+            uniMembers[i]->setTelephoneNumber(newTelephoneNumber);
+            uniMembers[i]->setHeight(newHeight);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Registry::sendEmailToAll(){
+    for(auto& x : uniMembers){
+        x->sendEmail();
+    }
+}
+

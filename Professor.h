@@ -14,7 +14,7 @@ class Professor : public Person{
             const std::string& email, float height,
             const char *profID, const std::string& specialty);
         Professor(const Professor& other );
-        virtual Person * clone() const override;
+        Person * clone() const override;
         ~Professor();
 
         void setProfID(const char * );
@@ -22,6 +22,7 @@ class Professor : public Person{
         const char * getProfID() const; 
         const char * getId() const override;
         const std::string& getSpecialty() const;
+        void sendEmail() const override;  // Override for Professor-specific email
 };
 
 #endif

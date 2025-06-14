@@ -84,3 +84,7 @@ const char * Professor::getId() const{
 const string& Professor::getSpecialty() const{
     return this->specialty;
 }
+
+void Professor::sendEmail() const {
+    cout << "Email Sent to the Professor!" << endl;
+}

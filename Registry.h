@@ -15,38 +15,32 @@ class Registry{
         
     public:
         Registry();
-        Registry(const Registry& other);
+        Registry(const Registry&);
         ~Registry();
 
         // add methods
-        void addPerson(Person* person);
-        void addCourse(Course* course);
+        void addPerson(Person*);
+        void addCourse(Course*);
 
         // delete methods
-        bool deletePerson(const char *ID);
-        bool deleteCourse(const char *courseID);
+        bool deletePerson(const char*);
+        bool deleteCourse(const char*);
 
         //update methods
-        bool updatePerson(const char *ID, Person *newPerson);
-        bool updateCourse(const char *courseID, Course *newCourse);
+        bool updatePerson(const char*, const std::string&, int, const std::string&, const std::string&, const std::string&, float);
+        bool updateCourse(const char*, const std::string&, int, const std::string&);        //send email method
+        void sendEmailToAll();
 
-        //send email methods
-        bool sendEmailToAllProfessors(std::string& email);
-        bool sendEmailToAllStudents(std::string& email);
-
-        bool addGrade(const char *AM, float grade, const char *courseID);
-        bool updateGrade(const char*AM, float updatedGrade, const char *courseID);
+        bool addGrade(const char*, float, const char*);
+        bool updateGrade(const char*, float, const char*);
         
         //save to CSV files
-        bool savePeopleToCSV(const std::string& csvfile) const;
-        bool saveCoursesToCSV(const std::string& csvfile) const;
-        bool saveGradesToCSV(const std::string& csvfile) const;
-
-        //load from CSV files
-        bool loadPeopleFromCSV(const std::string& csvfile);
-        bool loadCoursesFromCSV(const std::string& csvfile);
-        bool loadGradesFromCSV(const std::string& csvfile);
+        bool savePeopleToCSV(const std::string&) const;
+        bool saveCoursesToCSV(const std::string&) const;
+        bool saveGradesToCSV(const std::string&) const;
+        bool loadPeopleFromCSV(const std::string&);
+        bool loadCoursesFromCSV(const std::string&);
+        bool loadGradesFromCSV(const std::string&);
 };
-
 
 #endif

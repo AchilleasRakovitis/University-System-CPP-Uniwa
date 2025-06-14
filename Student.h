@@ -17,16 +17,17 @@ public:
             const std::string& email, float height,
             const char *AM, int semester, int declaredCourses);
     Student(const Student& other );
-    virtual Person* clone() const override;
+    Person* clone() const override; // Για πολυμορφισμό στον copy constructor του φοιτητολογίου
     ~Student();
     
     void setAM(const char * );
     void setSemester(int );
     void setDeclaredCourses(int );
     const char* getAM() const;
-    const char* getId() const override;
+    const char* getId() const override; // για πολυμορφισμό - να επιστρέψει ΑΜ 
     int getSemester() const;
     int getDeclaredCourses() const;
+    void sendEmail() const override;  // Override for Student-specific email
 };
 
 #endif

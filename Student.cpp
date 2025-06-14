@@ -50,6 +50,8 @@ Student::Student(const Student& other) : Person(other) {
     this->declaredCourses = other.declaredCourses;
 }
 
+// θα χρησιμοποιηθεί στον copy constructor του φοιτητολογίου
+// επιστρέφει αντικείμενο τύπου Student όταν ζητηθεί απο pointer.
 Person * Student::clone() const {
     return new Student(*this);
 }
@@ -104,6 +106,8 @@ const char * Student::getAM() const{
     return this->AM;
 }
 
+//επιστρέφω για το ΑΜ attribute(Πολυμορφισμός)
+//για να επιστραφεί το σωστό ID που είναι AM.
 const char * Student::getId() const{
     return this->AM;
 }
@@ -114,4 +118,9 @@ int Student::getSemester() const{
 
 int Student::getDeclaredCourses() const{
     return this->declaredCourses;
+}
+
+void Student::sendEmail() const {
+
+    cout << "Email sent to the student!" << endl;
 }
