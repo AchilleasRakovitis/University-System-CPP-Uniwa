@@ -10,11 +10,12 @@ private:
     std::string courseName;
     int courseSemester;
     std::string profName;
+    float grade;
 
     //methods
 public:
     //constructors
-    Course(const char *, const std::string&, int, const std::string& );
+    Course(const char *, const std::string&, int, const std::string&, float );
     Course(const Course& other); // copy constructor 
     Course* clone() const; // για πολυμορφισμό στον copy constructor του φοιτητολογίου
     ~Course(); // destructor 
@@ -23,11 +24,13 @@ public:
     void setCourseName(const std::string& );
     void setCourseSemester(int );
     void setProfName(const std::string& );
+    void setGrade(float );
     //getters   
     const char * getCourseID() const;
     const std::string& getCourseName() const;
     int getCourseSemester() const;
     const std::string& getProfName() const;
+    float getGrade() const;
 
 };
 

@@ -42,7 +42,7 @@ public:
     float getHeight() const;
     //general methods
     int returnAge() const;
-    virtual void sendEmail() const {}  // Virtual empty method for polymorphic email sending
+    virtual void sendEmail() const;  // Virtual empty method for polymorphic email sending
     
 };
 

@@ -31,16 +31,13 @@ class Registry{
         bool updateCourse(const char*, const std::string&, int, const std::string&);        //send email method
         void sendEmailToAll();
 
-        bool addGrade(const char*, float, const char*);
-        bool updateGrade(const char*, float, const char*);
+        bool addGrade(const char*, float );
+        bool updateGrade(const char*, float );
         
         //save to CSV files
-        bool savePeopleToCSV(const std::string&) const;
-        bool saveCoursesToCSV(const std::string&) const;
-        bool saveGradesToCSV(const std::string&) const;
-        bool loadPeopleFromCSV(const std::string&);
-        bool loadCoursesFromCSV(const std::string&);
-        bool loadGradesFromCSV(const std::string&);
+        bool savePeopleToCSV(const std::string& ) const;
+        bool saveCoursesToCSV(const std::string& ) const;
+        bool loadDataFromCSV(const std::string& ) const;
 };
 
 #endif

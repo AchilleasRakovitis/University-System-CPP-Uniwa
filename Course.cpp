@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Course::Course(const char * courseID,const string& courseName, int courseSemester, const string& profName ){
+Course::Course(const char * courseID,const string& courseName, int courseSemester, const string& profName, float grade ){
     if(courseID == nullptr){
         this->courseID = new char[1];
         this->courseID[0] = '\0';
@@ -24,6 +24,12 @@ Course::Course(const char * courseID,const string& courseName, int courseSemeste
     }
 
     this->profName = profName;
+
+    if(grade >= 0 && grade <= 10){
+        this->grade = grade;
+    }else{
+        this->grade = 0;
+    }
 }
 
 Course::Course(const Course& other){
@@ -38,6 +44,7 @@ Course::Course(const Course& other){
     this->courseName = other.courseName;
     this->courseSemester = other.courseSemester;
     this->profName = other.profName;
+    this->grade = other.grade;
 }
 
 //ίδιο με την λειτουργία στις άλλες κλάσεις
@@ -83,6 +90,14 @@ void Course::setProfName(const string& profName){
     this->profName = profName;
 }
 
+void Course::setGrade(float grade){
+    if(grade >= 0 && grade <= 10){
+        this->grade = grade;
+    }else{
+        this->grade = 0;
+    }
+}
+
 const char * Course::getCourseID() const{
     return this->courseID;
 }
@@ -97,4 +112,8 @@ int Course::getCourseSemester() const{
 
 const string& Course::getProfName() const{
     return this->profName;
+}
+
+float Course::getGrade() const{
+    return this->grade;
 }
