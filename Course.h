@@ -3,35 +3,33 @@
 
 #include <string>
 
+class Professor;
+
 class Course{
-    // attributes
 private:
-    char * courseID;
-    std::string courseName;
-    int courseSemester;
-    std::string profName;
-    float grade;
-
-    //methods
+    char* ID;
+    std::string description;
+    int semester;
+    const Professor* courseManager;
 public:
-    //constructors
-    Course(const char *, const std::string&, int, const std::string&, float );
-    Course(const Course& other); // copy constructor 
-    Course* clone() const; // για πολυμορφισμό στον copy constructor του φοιτητολογίου
-    ~Course(); // destructor 
-    //setters
-    void setCourseID(const char * );
-    void setCourseName(const std::string& );
-    void setCourseSemester(int );
-    void setProfName(const std::string& );
-    void setGrade(float );
-    //getters   
-    const char * getCourseID() const;
-    const std::string& getCourseName() const;
-    int getCourseSemester() const;
-    const std::string& getProfName() const;
-    float getGrade() const;
+    //Constructors, Assignment operator, Destructor
+    Course(const char* ID, const std::string& description, int semester, const Professor* courseManager);
+    Course(const char* ID, int semester);
+    Course(const Course& other);
+    Course& operator=(const Course& other);
+    ~Course();
 
+    //Setters
+    void setID(const char* ID);
+    void setDescription(const std::string& description);
+    void setSemester(int semester);
+    void setCourseManager(const Professor* courseManager);
+
+    //Getters
+    const char* getID() const;
+    const std::string& getDescription() const;
+    int getSemester() const;
+    const Professor* getCourseManager() const;
 };
 
 #endif

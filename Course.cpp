@@ -1,119 +1,116 @@
-#include <iostream>
-#include <string>
-#include <string.h>
 #include "Course.h"
+#include <string.h>
 
 using namespace std;
 
-Course::Course(const char * courseID,const string& courseName, int courseSemester, const string& profName, float grade ){
-    if(courseID == nullptr){
-        this->courseID = new char[1];
-        this->courseID[0] = '\0';
+Course::Course(const char* ID, const string& description, int semester, const Professor* courseManager){
+    if(ID == nullptr){
+        this->ID = new char[1];
+        this->ID[0] = '\0';
     }else{
-        this->courseID = new char[strlen(courseID) + 1];
-        strcpy(this->courseID, courseID);
+        this->ID = new char[strlen(ID) + 1];
+        strcpy(this->ID, ID);
     }
 
-    this->courseName = courseName;
+    this->description = description;
+    this->semester = semester;
+    this->courseManager = courseManager;
+}
 
-    if(courseSemester > 10 || courseSemester < 1){
-        cout << "Semester count is out of limits" << endl;
-        this->courseSemester = 1; //set default value
+Course::Course(const char* ID, int semester){
+    if(ID == nullptr){
+        this->ID = new char[1];
+        this->ID[0] = '\0';
     }else{
-        this->courseSemester = courseSemester;
+        this->ID = new char[strlen(ID) + 1];
+        strcpy(this->ID, ID);
     }
-
-    this->profName = profName;
-
-    if(grade >= 0 && grade <= 10){
-        this->grade = grade;
-    }else{
-        this->grade = 0;
-    }
+    
+    this->description = "";
+    this->semester = semester;
+    this->courseManager = nullptr;
 }
 
 Course::Course(const Course& other){
-    if(other.courseID == nullptr){
-        this->courseID = new char[1];
-        this->courseID[0] = '\0';
+    if(other.ID == nullptr){
+        this->ID = new char[1];
+        this->ID[0] = '\0';
     }else{
-        this->courseID = new char[strlen(other.courseID) + 1];
-        strcpy(this->courseID, other.courseID);
+        this->ID = new char[strlen(other.ID) + 1];
+        strcpy(this->ID, other.ID);
     }
 
-    this->courseName = other.courseName;
-    this->courseSemester = other.courseSemester;
-    this->profName = other.profName;
-    this->grade = other.grade;
+    this->description = other.description;
+    this->semester = other.semester;
+    this->courseManager = other.courseManager;
 }
 
-//ίδιο με την λειτουργία στις άλλες κλάσεις
-Course * Course::clone() const{
-    return new Course(*this);
+Course& Course::operator=(const Course& other){
+    if(this == &other){
+        return *this;
+    }
+
+    if(this->ID != nullptr){
+        delete[] this->ID;
+    }
+
+    if(other.ID == nullptr){
+        this->ID = new char[1];
+        this->ID[0] = '\0';
+    }else{
+        this->ID = new char[strlen(other.ID) + 1];
+        strcpy(this->ID, other.ID);
+    }
+
+    this->description = other.description;
+    this->semester = other.semester;
+    this->courseManager = other.courseManager;
+
+    return *this;
 }
 
 Course::~Course(){
-    if(this->courseID != nullptr){
-        delete[] courseID;
-    }
+    delete[] this->ID;
 }
 
-void Course::setCourseID(const char * courseID){
-    if(courseID == nullptr){
-        if(this->courseID){
-            delete[] this->courseID;
-        }
-        this->courseID = new char[1];
-        this->courseID[0] = '\0';
+void Course::setID(const char* ID){
+    if(this->ID){
+        delete[] this->ID;
+    }
+     
+    if(ID == nullptr){
+        this->ID = new char[1];
+        this->ID[0] = '\0';
     }else{
-        if(this->courseID){
-            delete[] this->courseID; 
-        }
-        this->courseID = new char[strlen(courseID) + 1];
-        strcpy(this->courseID, courseID);
+        this->ID = new char[strlen(ID) + 1];
+        strcpy(this->ID, ID);
     }
 }
 
-void Course::setCourseName(const string& courseName){
-    this->courseName = courseName;
+void Course::setDescription(const string& description){
+    this->description = description;
 }
 
-void Course::setCourseSemester(int courseSemester){
-    if(courseSemester >= 1 && courseSemester <= 10){
-        this->courseSemester = courseSemester;
-    }else{
-        cout << "Course semester is out of limits (1-10)" << endl;
-    }
+void Course::setSemester(int semester){
+    this->semester = semester;
 }
 
-void Course::setProfName(const string& profName){
-    this->profName = profName;
+void Course::setCourseManager(const Professor* courseManager){
+    this->courseManager = courseManager;
 }
 
-void Course::setGrade(float grade){
-    if(grade >= 0 && grade <= 10){
-        this->grade = grade;
-    }else{
-        this->grade = 0;
-    }
+const char* Course::getID() const{
+    return this->ID;
 }
 
-const char * Course::getCourseID() const{
-    return this->courseID;
+const string& Course::getDescription() const{
+    return this->description;
 }
 
-const string& Course::getCourseName() const{
-    return this->courseName;
+int Course::getSemester() const{
+    return this->semester;
 }
 
-int Course::getCourseSemester() const{
-    return this->courseSemester;
-}
-
-const string& Course::getProfName() const{
-    return this->profName;
-}
-
-float Course::getGrade() const{
-    return this->grade;
+const Professor* Course::getCourseManager() const{
+    return this->courseManager;
 }

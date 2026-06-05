@@ -1,7 +1,8 @@
-#include <iostream>
-#include <fstream>
 #include "Registry.h"
-#include <string.h>
+#include <iostream>
+#include <cstring>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -9,237 +10,367 @@ Registry::Registry(){
 
 }
 
-Registry::Registry(const Registry& other){
-    for(auto& i : other.uniMembers){
-        uniMembers.push_back(i->clone());
+Registry::~Registry(){
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        delete uniMembers[i];
     }
 
-    for(auto& i : other.courses){
-        courses.push_back(i->clone());
+    for(int i = 0; i < (int)courses.size(); i++){
+        delete courses[i];
     }
+
 }
 
-Registry::~Registry(){
-    //delete all person objects
-    for(auto& person : uniMembers){
-        delete person;
+void Registry::addMember(Person* member){
+    bool flag = false;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        if(!strcmp(uniMembers[i]->getID(), member->getID())){
+            flag = true;
+            break;
+        }
     }
-    uniMembers.clear();
-
-    //delete all courses objects
-    for(auto& course : courses){    
-        delete course;
-    }
-    courses.clear();
-
+    if(!flag){
+        this->uniMembers.push_back(member);
+    }else{
+        cout << "Το μέλος με αυτό το ID: " << member->getID() <<" υπάρχει ήδη." << endl;
+        delete member;
+    }  
 }
 
 void Registry::addCourse(Course* course){
-    this->courses.push_back(course);
-}
-
-void Registry::addPerson(Person* person){
-    this->uniMembers.push_back(person);
-}
-
-bool Registry::deleteCourse(const char* courseID) {
-    if(courseID == nullptr){
-        return false;
-    }
-    for(int i = 0; i < courses.size(); ++i){
-        if(strcmp(courses[i]->getCourseID(), courseID) == 0){
-            delete courses[i];
-            courses.erase(courses.begin() + i);
-            return true;
+    bool flag = false;
+    for(int i = 0; i < (int)courses.size(); i++){
+        if(!strcmp(courses[i]->getID(), course->getID())){
+            flag = true;
+            break;
         }
     }
-    return false;
+
+    if(!flag){
+        this->courses.push_back(course);
+    }else{
+        cout << "Το μάθημα με αυτό το ID: " << course->getID() << " υπάρχει ηδη." << endl;
+        delete course;
+    }
 }
 
-bool Registry::deletePerson(const char* ID){
+void Registry::deleteMember(const char* ID){
     if(ID == nullptr){
-        return false;
+        throw 1;
     }
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        if(!strcmp(uniMembers[i]->getID(), ID)){
+            Person* toBeRemoved = uniMembers[i];
+            Professor* tmpPr = dynamic_cast<Professor*>(toBeRemoved);
 
-    for(int i = 0; i < uniMembers.size(); ++i){
-        if(strcmp(uniMembers[i]->getId(), ID) == 0){
-            delete uniMembers[i];
+            if(tmpPr != nullptr){
+                for(int j = 0; j < (int)courses.size(); j++){
+                    if(courses[j]->getCourseManager() == tmpPr){
+                        courses[j]->setCourseManager(nullptr);
+                    }
+                }
+            }
+            delete toBeRemoved;
             uniMembers.erase(uniMembers.begin() + i);
-            return true;
+            return;
         }
     }
-    return false;
+    cout << "Το μέλος με αυτό το ID: " << ID << " δεν βρέθηκε." << endl;
 }
 
-bool Registry::updateCourse(const char * courseID, const string& newName, int newSemester, const string& newProfName) {
-    if(courseID == nullptr){ 
-    return false;
-    }
-
-    for(int i = 0; i < courses.size(); ++i){
-        if(strcmp(courses[i]->getCourseID(), courseID) == 0){
-            courses[i]->setCourseName(newName);
-            courses[i]->setCourseSemester(newSemester);
-            courses[i]->setProfName(newProfName);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Registry::updatePerson(const char* ID, const std::string& newName, int newBirthYear, const std::string& newStreet, const std::string& newTelephoneNumber, const std::string& newEmail, float newHeight) {
-
+void Registry::deleteCourse(const char* ID){
     if(ID == nullptr){
-        return false;
+        throw 1;
     }
 
-    for(int i = 0; i<uniMembers.size(); ++i){
-        if(strcmp(uniMembers[i]->getId(), ID) == 0){
-            uniMembers[i]->setName(newName);
-            uniMembers[i]->setBirthYear(newBirthYear);
-            uniMembers[i]->setEmail(newEmail);
-            uniMembers[i]->setStreet(newStreet);
-            uniMembers[i]->setTelephoneNumber(newTelephoneNumber);
-            uniMembers[i]->setHeight(newHeight);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void Registry::sendEmailToAll(){
-    for(auto& x : uniMembers){
-        x->sendEmail();
-    }
-}
-
-bool Registry::addGrade(const char* courseID, float newGrade){
-    if(courseID == nullptr || newGrade < 0 || newGrade > 10){
-        return false;
-    }
-
-    for(int i = 0; i < courses.size(); ++i){
-        if(strcmp(courses[i]->getCourseID(), courseID) == 0){
-            courses[i]->setGrade(newGrade);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Registry::updateGrade(const char* courseID, float updatedGrade){
-    if(courseID == nullptr || updatedGrade < 5 || updatedGrade > 10){
-        return false;
-    }
-    
-    for(int i = 0; i < courses.size(); ++i){
-        if(strcmp(courses[i]->getCourseID(), courseID) == 0){
-            if(courses[i]->getGrade() < 5){
-                courses[i]->setGrade(updatedGrade);
-                return true;
+    for(int i = 0; i < (int)courses.size(); i++){
+        if(!strcmp(courses[i]->getID(), ID)){
+            Course* toBeRemoved = courses[i];
+            Student* tmpSt;
+            Professor* tmpPr;
+            for(int j = 0; j < (int)uniMembers.size(); j++){
+                tmpSt = dynamic_cast<Student*>(uniMembers[j]);
+                if(tmpSt != nullptr){
+                    tmpSt->removeCourse(toBeRemoved);
+                }
+                tmpPr = dynamic_cast<Professor*>(uniMembers[j]);
+                if(tmpPr != nullptr){
+                    tmpPr->removeCourse(toBeRemoved);
+                }
             }
-            return false;
+
+            delete toBeRemoved;
+            courses.erase(courses.begin() + i);
+            return;
         }
     }
 
-    return false;
+    cout << "Το μάθημα με αυτό το ID: " << ID << " δεν βρέθηκε." << endl;
 }
 
-bool Registry::savePeopleToCSV(const string& filename) const{
-    try{
-        ofstream file(filename);
-        if(!file.is_open()){
-            return false;
+void Registry::updateStudent(const char* ID, const string& newName, char newGender, int newSemester){
+    Student* student = dynamic_cast<Student*>(findMember(ID));
+
+    if(student == nullptr){
+        cout <<"Δεν βρέθηκε φοιτητής για ενημέρωση στοιχείων με ID: " << ID << endl;
+        return;
+    }
+
+    student->setName(newName);
+    student->setGender(newGender);
+    student->setSemester(newSemester); 
+}
+
+void Registry::updateProfessor(const char* ID, const string& newName, char newGender, const string& newSpecialty){
+    Professor* professor = dynamic_cast<Professor*>(findMember(ID));
+
+    if(professor == nullptr){
+        cout <<"Δεν βρέθηκε καθηγητής για ενημέρωση στοιχείων με ID: " << ID << endl;
+        return;
+    }
+
+    professor->setName(newName);
+    professor->setGender(newGender);
+    professor->setSpecialty(newSpecialty);
+}
+
+void Registry::updateCourse(const char* ID, const string& newDescription, int newSemester){
+    Course* course = findCourse(ID);
+
+    if(course == nullptr){
+        cout << "Δεν βρέθηκε μάθημα για ενημέρωση στοιχείων με ID: " << ID << endl;
+        return;
+    }
+
+    course->setDescription(newDescription);
+    course->setSemester(newSemester);
+}
+
+void Registry::sendEmailToStudents() const{
+    Student* tmpSt;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        tmpSt = dynamic_cast<Student*>(uniMembers[i]);
+        if(tmpSt != nullptr){
+            tmpSt->sendEmail();
+        }
+    }
+}
+
+void Registry::sendEmailToProfessors() const{
+    Professor* tmpPr;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        tmpPr = dynamic_cast<Professor*>(uniMembers[i]);
+        if(tmpPr != nullptr){
+            tmpPr->sendEmail();
+        }
+    }
+}
+
+Person* Registry::findMember(const char* ID) const{
+    if(ID == nullptr){
+        throw 1;
+    }
+    
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        if(!strcmp(uniMembers[i]->getID(), ID)){
+            return uniMembers[i];
+        }
+    }
+
+    return nullptr;
+}
+
+Course* Registry::findCourse(const char* ID) const{
+    if(ID == nullptr){
+        throw 1;
+    }
+
+    for(int i = 0; i < (int)courses.size(); i++){
+        if(!strcmp(courses[i]->getID(), ID)){
+            return courses[i];
+        }
+    }
+
+    return nullptr;
+}
+
+void Registry::enrollStudentInCourse(const char* studentID, const char* courseID){
+    Person* person = findMember(studentID);
+    Course* course = findCourse(courseID);
+
+    Student* student = dynamic_cast<Student*>(person);
+
+    if(student == nullptr){
+        cout << "Δεν βρέθηκε φοιτητής με ID: " << studentID << endl;
+        return;
+    }
+
+    if(course == nullptr){
+        cout << "Δεν βρέθηκε μάθημα με ID: " << courseID << endl;
+        return;
+    }
+
+    student->addCourse(course);
+}
+
+void Registry::unenrollStudentFromCourse(const char* studentID, const char* courseID){
+    Person* person = findMember(studentID);
+    Course* course = findCourse(courseID);
+
+    Student* student = dynamic_cast<Student*>(person);
+
+    if(student == nullptr){
+        cout << "Δεν βρέθηκε φοιτητής με ID: " << studentID << endl;
+        return;
+    }
+
+    if(course == nullptr){
+        cout << "Δεν βρέθηκε μάθημα με ID: " << courseID << endl;
+        return;
+    }
+
+    student->removeCourse(course);
+}
+
+void Registry::assignProfessorToCourse(const char* professorID, const char* courseID){
+    Person* person = findMember(professorID);
+    Course* course = findCourse(courseID);
+
+    Professor* professor = dynamic_cast<Professor*>(person);
+
+    if(professor == nullptr){
+        cout << "Δεν βρέθηκε καθηγητής με ID: " << professorID << endl;
+        return;
+    }
+
+    if(course == nullptr){
+        cout << "Δεν βρέθηκε μάθημα με ID: " << courseID << endl;
+        return;
+    }
+
+    professor->addCourse(course);
+    course->setCourseManager(professor);
+}
+
+void Registry::unassignProfessorFromCourse(const char* professorID, const char* courseID){
+    Person* person = findMember(professorID);
+    Course* course = findCourse(courseID);
+
+    Professor* professor = dynamic_cast<Professor*>(person);
+
+    if(professor == nullptr){
+        cout << "Δεν βρέθηκε καθηγητής με ID: " << professorID << endl;
+        return;
+    }
+
+    if(course == nullptr){
+        cout << "Δεν βρέθηκε μάθημα με ID: " << courseID << endl;
+        return;
+    }
+
+    professor->removeCourse(course);
+    //Παρατήρησα bug όπου όταν αφαιρώ οποιονδήποτε καθηγητή 
+    //αυτόματα σβήνεται ο υπεύθυνος χωρίς να ήταν πάντα αυτός που έσβηνα.
+    //Πολλοί καθηγητές μπορούν να διδάσκουν ένα μάθημα σύμφωνα με την εκφώνηση.
+    //Ο έλεγχος στο if διορθώνει αυτό το bug.
+    if(course->getCourseManager() == professor){
+        course->setCourseManager(nullptr);
+    }
+
+}
+
+void Registry::saveToCSV(const string& filename) const{
+    ofstream fileOut(filename);
+    if(!fileOut){
+        throw 1;
+    }
+
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        Student* student = dynamic_cast<Student*>(uniMembers[i]);
+        if(student != nullptr){
+            fileOut << "S," << student->getID() << "," << student->getName()
+                    << "," << student->getGender() << "," << student->getSemester() << endl;
         }
 
-        file << " For Student: AM, Name, Email, Semester, Declared Courses\n";
-        file << "For Professor: ID, Name, Email, Specialty\n";
-        file << "For General Person: ID, Name, Email, Birth Year, Telephone Number\n\n";
+        Professor* professor = dynamic_cast<Professor*>(uniMembers[i]);
+        if(professor != nullptr){
+            fileOut << "P," << professor->getID() << "," << professor->getName()
+                    << "," << professor->getGender() << "," << professor->getSpecialty() << endl;
+        }
+    }
 
-        for(const auto& person : uniMembers){
-            Student* student = dynamic_cast<Student*>(person);
-            Professor* professor = dynamic_cast<Professor*>(person);
+    for(int i = 0; i < (int)courses.size(); i++){
+        fileOut << "C," << courses[i]->getID() << "," << courses[i]->getDescription()
+                << "," << courses[i]->getSemester() << endl;
+    }
+}
 
-            if(student){
-                file << student->getAM() << ", "
-                     << student->getName() << ", " 
-                     << student->getEmail() << ", "
-                     << student->getSemester() << ", "
-                     << student->getDeclaredCourses() << "\n";
-            }else if(professor){
-                file << professor->getProfID() << ", "
-                     << professor->getName() << ", "
-                     << professor->getEmail() << ", "
-                     << professor->getSpecialty() << "\n";
-            }else{
-                 file << person->getId() << "," 
-                     << person->getName() << "," 
-                     << person->getEmail() << "," 
-                     << person->getBirthYear() << "," 
-                     << person->getTelephoneNumber() << "\n";
+void Registry::loadFromCSV(const string& filename){
+    ifstream fileIn(filename);
+
+    if(!fileIn){
+        throw 1;
+    }
+
+    string line;
+    while(getline(fileIn, line)){
+        stringstream ss(line);
+        string substr;
+        vector<string> parts;
+        while(getline(ss, substr, ',')){
+            parts.push_back(substr);
+        }
+
+        if(parts.empty()){
+            throw 2;
+        }
+
+        if(parts[0] == "S"){
+            if(parts.size() != 5){
+                 throw 2; 
             }
+            Student* student = new Student(parts[1].c_str(), parts[2], parts[3][0], stoi(parts[4]));
+            this->addMember(student);
+        }else if(parts[0] == "P"){
+            if(parts.size() != 5){ 
+                throw 2; 
+            }
+            Professor* professor = new Professor(parts[1].c_str(), parts[2], parts[3][0], parts[4]);
+            this->addMember(professor);
+        }else if(parts[0] == "C"){
+            if(parts.size() != 4){
+                 throw 2; 
+            }
+            Course* course = new Course(parts[1].c_str(), parts[2], stoi(parts[3]), nullptr);
+            this->addCourse(course);
+        }else{
+            throw 2;
         }
-
-        file.close();
-        return true;
-
     }
-    catch(const exception& e){
-        cerr << "Error saving people to CSV: " << e.what() << endl;
-        return false;
-    }
-    
 }
 
-bool Registry::saveCoursesToCSV(const string& filename) const{
-    try {
-        ofstream file(filename);
-        if (!file.is_open()) {
-            return false;
+void Registry::printAllMembers() const{
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        Student* student = dynamic_cast<Student*>(uniMembers[i]);
+        if(student != nullptr){
+            cout << "Φοιτητής: " << student->getID() << ", " << student->getName()
+                 << ", " << student->getGender() << ", εξάμηνο " << student->getSemester() << endl;
         }
 
-        file << "Course ID, Course Name, Grade, Course Semester, Professor's Name\n";
-        
-        for (const auto& course : courses) {
-            file << course->getCourseID() << "," 
-                 << course->getCourseName() << "," 
-                 << course->getGrade() << ", "
-                 << course->getCourseSemester() << ","
-                 << course->getProfName() << "\n";
+        Professor* professor = dynamic_cast<Professor*>(uniMembers[i]);
+        if(professor != nullptr){
+            cout << "Καθηγητής: " << professor->getID() << ", " << professor->getName()
+                 << ", " << professor->getGender() << ", ειδικότητα: " << professor->getSpecialty() << endl;
         }
-        
-        file.close();
-        return true;
-
-    } catch (const exception& e) {
-        cerr << "Error saving courses to CSV: " << e.what() << endl;
-        return false;
     }
-
 }
 
-bool Registry::loadDataFromCSV(const string& filename) const{
-    try{
-        ifstream file(filename);
-        if(!file.is_open()){
-            return false;
-        }
-
-        string line;
-        while(getline(file, line)){
-            cout << line << endl;
-        }
-
-        file.close();
-        return true;
+void Registry::printAllCourses() const{
+    for(int i = 0; i < (int)courses.size(); i++){
+        cout << "Μάθημα: " << courses[i]->getID() << ", " << courses[i]->getDescription()
+             << ", εξάμηνο " << courses[i]->getSemester() << endl;
     }
-    catch(const exception& e){
-        cerr << "Error retrieving courses to CSV: " << e.what() << endl;
-        return false;
-    }
-    
 }
+
+
 

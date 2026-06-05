@@ -1,43 +1,41 @@
 #ifndef REGISTRY_H
 #define REGISTRY_H
 
+#include "Person.h"
+#include "Course.h"
+#include "Professor.h"
+#include "Student.h"
 #include <vector>
 #include <string>
-#include "Person.h"
-#include "Student.h"
-#include "Professor.h"
-#include "Course.h"
 
 class Registry{
-    private:
-        std::vector<Person *> uniMembers;
-        std::vector<Course *> courses;
-        
-    public:
-        Registry();
-        Registry(const Registry&);
-        ~Registry();
-
-        // add methods
-        void addPerson(Person*);
-        void addCourse(Course*);
-
-        // delete methods
-        bool deletePerson(const char*);
-        bool deleteCourse(const char*);
-
-        //update methods
-        bool updatePerson(const char*, const std::string&, int, const std::string&, const std::string&, const std::string&, float);
-        bool updateCourse(const char*, const std::string&, int, const std::string&);        //send email method
-        void sendEmailToAll();
-
-        bool addGrade(const char*, float );
-        bool updateGrade(const char*, float );
-        
-        //save to CSV files
-        bool savePeopleToCSV(const std::string& ) const;
-        bool saveCoursesToCSV(const std::string& ) const;
-        bool loadDataFromCSV(const std::string& ) const;
+private:
+    std::vector<Person* > uniMembers;
+    std::vector<Course* > courses;
+public:
+    Registry();
+    ~Registry();
+    Registry(const Registry& other) = delete;
+    Registry& operator=(const Registry& other) = delete;
+    void addMember(Person* member);
+    void addCourse(Course* course);
+    void deleteMember(const char* ID);
+    void deleteCourse(const char* ID);
+    void updateStudent(const char* ID, const std::string& newName, char newGender, int newSemester);
+    void updateProfessor(const char* ID, const std::string& newName, char newGender, const std::string& newSpecialty);
+    void updateCourse(const char* ID, const std::string& newDescription, int newSemester);
+    void sendEmailToStudents() const;
+    void sendEmailToProfessors() const;
+    Person* findMember(const char* ID ) const;
+    Course* findCourse(const char* ID) const;
+    void enrollStudentInCourse(const char* studentID, const char* courseID);
+    void unenrollStudentFromCourse(const char* studentID, const char* courseID);
+    void assignProfessorToCourse(const char* professorID, const char* courseID);
+    void unassignProfessorFromCourse(const char* professorID, const char* courseID);
+    void saveToCSV(const std::string& filename) const;
+    void loadFromCSV(const std::string& filename);
+    void printAllMembers() const;
+    void printAllCourses() const;
 };
 
 #endif

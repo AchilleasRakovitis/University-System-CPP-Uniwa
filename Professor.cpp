@@ -1,90 +1,64 @@
-#include <iostream>
-#include <cstring>
-#include <string>
 #include "Professor.h"
+#include <iostream>
 
 using namespace std;
 
-Professor::Professor(const char *ID, const std::string& name, int birthYear, 
-            const std::string& street, const std::string& telephoneNumber, 
-            const std::string& email, float height,
-            const char *profID, const std::string& specialty) 
-        : Person(ID, name, birthYear, street, telephoneNumber, email, height){
 
-        if(profID == nullptr){
-            this->profID = new char[1]; 
-            this->profID[0] = '\0';
-        }else{
-            this->profID = new char[strlen(profID) + 1];
-            strcpy(this->profID, profID);
-        }
-
-        if(specialty.empty()){
-            this->specialty = "No specialty";
-        }else{
-            this->specialty = specialty;
-        }
-    }
-
-Professor::Professor(const Professor& other) : Person(other){
-    if(other.profID == nullptr){
-        this->profID = new char[1]; 
-        this->profID[0] = '\0';
-    }else{
-        this->profID = new char[strlen(other.profID) + 1];
-        strcpy(this->profID, other.profID);
-    }
-
-    this->specialty = other.specialty;
+Professor::Professor(const char* ID, const string& name, char gender, const string& specialty) : Person(ID, name, gender){
+    this->specialty = specialty;
 }
 
-Person* Professor::clone() const{
-    return new Professor(*this);
+Professor::Professor(const char* ID, const string& name) : Person(ID, name){
+    this->specialty = "Default";
+}
+
+Professor::Professor(const Professor& other) : Person(other){
+    this->specialty = other.specialty;
+    this->coursesTeaching = other.coursesTeaching;
+}
+
+Professor& Professor::operator=(const Professor& other){
+    if(this == &other){
+        return *this;
+    }
+
+    Person::operator=(other);
+
+    this->specialty = other.specialty;
+    this->coursesTeaching = other.coursesTeaching;
+
+    return *this;
 }
 
 Professor::~Professor(){
-    if(this->profID != nullptr){
-        delete[] profID;
-    }
-}
 
-void Professor::setProfID(const char * profID){
-    if(profID == nullptr){
-        if(this->profID){
-            delete[] this->profID;
-        }
-        this->profID = new char[1];
-        this->profID[0] = '\0';
-    }else{
-        if(this->profID){
-            delete[] this->profID;
-        }
-        this->profID = new char[strlen(profID) + 1];
-        strcpy(this->profID, profID);
-    }
 }
 
 void Professor::setSpecialty(const string& specialty){
-    if(specialty.empty()){
-        this->specialty = "No specialty";
-    }else{
-        this->specialty = specialty;
-    }
-}
-
-const char * Professor::getProfID() const{
-    return this->profID;
-}
-
-// for polymorhism
-const char * Professor::getId() const{
-    return this->profID;
+    this->specialty = specialty;
 }
 
 const string& Professor::getSpecialty() const{
     return this->specialty;
 }
 
-void Professor::sendEmail() const {
-    cout << "Email Sent to the Professor!" << endl;
+void Professor::addCourse(Course* course){
+    this->coursesTeaching.push_back(course);
+}
+
+void Professor::removeCourse(Course* course){
+    for(int i = 0; i < (int)coursesTeaching.size(); i++){
+        if(coursesTeaching[i] == course){
+            coursesTeaching.erase(coursesTeaching.begin() + i);
+            break;
+        }
+    }
+}
+
+const vector<Course * >& Professor::getCoursesTeaching() const{
+    return this->coursesTeaching;
+}
+
+void Professor::sendEmail() const{
+    cout << "Το email στάλθηκε στον καθηγητή " << this-> name << endl;
 }
