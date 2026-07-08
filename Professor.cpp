@@ -47,10 +47,11 @@ void Professor::addCourse(Course* course){
 }
 
 void Professor::removeCourse(Course* course){
-    for(int i = 0; i < (int)coursesTeaching.size(); i++){
+    bool found = false;
+    for(int i = 0; i < (int)coursesTeaching.size() && !found; i++){
         if(coursesTeaching[i] == course){
             coursesTeaching.erase(coursesTeaching.begin() + i);
-            break;
+            found = true;
         }
     }
 }

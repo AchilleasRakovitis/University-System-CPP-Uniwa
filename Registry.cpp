@@ -23,10 +23,9 @@ Registry::~Registry(){
 
 void Registry::addMember(Person* member){
     bool flag = false;
-    for(int i = 0; i < (int)uniMembers.size(); i++){
+    for(int i = 0; i < (int)uniMembers.size() && !flag; i++){
         if(!strcmp(uniMembers[i]->getID(), member->getID())){
             flag = true;
-            break;
         }
     }
     if(!flag){
@@ -279,35 +278,71 @@ void Registry::unassignProfessorFromCourse(const char* professorID, const char* 
 
 }
 
-void Registry::saveToCSV(const string& filename) const{
-    ofstream fileOut(filename);
-    if(!fileOut){
-        throw 1;
-    }
-
+void Registry::saveToCSV() const{
+    ofstream fileOut("Φοιτητές.csv");
+    if(!fileOut) throw 1;
     for(int i = 0; i < (int)uniMembers.size(); i++){
         Student* student = dynamic_cast<Student*>(uniMembers[i]);
         if(student != nullptr){
-            fileOut << "S," << student->getID() << "," << student->getName()
+            fileOut << student->getID() << "," << student->getName()
                     << "," << student->getGender() << "," << student->getSemester() << endl;
         }
+    }
+    fileOut.close();
 
+    ofstream fileOut2("Καθηγητές.csv");
+    if(!fileOut2) throw 1;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
         Professor* professor = dynamic_cast<Professor*>(uniMembers[i]);
         if(professor != nullptr){
-            fileOut << "P," << professor->getID() << "," << professor->getName()
-                    << "," << professor->getGender() << "," << professor->getSpecialty() << endl;
+            fileOut2 << professor->getID() << "," << professor->getName()
+                     << "," << professor->getGender() << "," << professor->getSpecialty() << endl;
         }
     }
+    fileOut2.close();
 
+    ofstream fileOut3("Μαθήματα.csv");
+    if(!fileOut3) throw 1;
     for(int i = 0; i < (int)courses.size(); i++){
-        fileOut << "C," << courses[i]->getID() << "," << courses[i]->getDescription()
-                << "," << courses[i]->getSemester() << endl;
+        const Professor* m = courses[i]->getCourseManager();
+        fileOut3 << courses[i]->getID() << "," << courses[i]->getDescription()
+                 << "," << courses[i]->getSemester() << ",";
+        if(m != nullptr){
+            fileOut3 << m->getID();
+        }
+        fileOut3 << endl;
     }
+    fileOut3.close();
+
+    ofstream fileOut4("ΕγγραφέςΦοιτητών.csv");
+    if(!fileOut4) throw 1;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        Student* student = dynamic_cast<Student*>(uniMembers[i]);
+        if(student != nullptr){
+            const vector<Course*>& attending = student->getCoursesAttending();
+            for(int j = 0; j < (int)attending.size(); j++){
+                fileOut4 << student->getID() << "," << attending[j]->getID() << endl;
+            }
+        }
+    }
+    fileOut4.close();
+
+    ofstream fileOut5("ΑναθέσειςΔιδασκαλίας.csv");
+    if(!fileOut5) throw 1;
+    for(int i = 0; i < (int)uniMembers.size(); i++){
+        Professor* professor = dynamic_cast<Professor*>(uniMembers[i]);
+        if(professor != nullptr){
+            const vector<Course*>& teaching = professor->getCoursesTeaching();
+            for(int j = 0; j < (int)teaching.size(); j++){
+                fileOut5 << professor->getID() << "," << teaching[j]->getID() << endl;
+            }
+        }
+    }
+    fileOut5.close();
 }
 
-void Registry::loadFromCSV(const string& filename){
-    ifstream fileIn(filename);
-
+void Registry::loadFromCSV(){
+    ifstream fileIn("Φοιτητές.csv");
     if(!fileIn){
         throw 1;
     }
@@ -325,26 +360,120 @@ void Registry::loadFromCSV(const string& filename){
             throw 2;
         }
 
-        if(parts[0] == "S"){
-            if(parts.size() != 5){
-                 throw 2; 
-            }
-            Student* student = new Student(parts[1].c_str(), parts[2], parts[3][0], stoi(parts[4]));
-            this->addMember(student);
-        }else if(parts[0] == "P"){
-            if(parts.size() != 5){ 
-                throw 2; 
-            }
-            Professor* professor = new Professor(parts[1].c_str(), parts[2], parts[3][0], parts[4]);
-            this->addMember(professor);
-        }else if(parts[0] == "C"){
-            if(parts.size() != 4){
-                 throw 2; 
-            }
-            Course* course = new Course(parts[1].c_str(), parts[2], stoi(parts[3]), nullptr);
-            this->addCourse(course);
-        }else{
+        if(parts.size() != 4){
             throw 2;
+        }
+        Student* student = new Student(parts[0].c_str(), parts[1], parts[2][0], stoi(parts[3]));
+        this->addMember(student);
+    }
+
+    ifstream fileIn2("Καθηγητές.csv");
+    if(!fileIn2){
+        throw 1;
+    }
+
+    while(getline(fileIn2, line)){
+        stringstream ss(line);
+        string substr;
+        vector<string> parts;
+        while(getline(ss, substr, ',')){
+            parts.push_back(substr);
+        }
+
+        if(parts.empty()){
+            throw 2;
+        }
+
+        if(parts.size() != 4){
+            throw 2;
+        }
+        Professor* professor = new Professor(parts[0].c_str(), parts[1], parts[2][0], parts[3]);
+        this->addMember(professor);
+    }
+
+    ifstream fileIn3("Μαθήματα.csv");
+    if(!fileIn3){
+        throw 1;
+    }
+
+    while(getline(fileIn3, line)){
+        stringstream ss(line);
+        string substr;
+        vector<string> parts;
+        while(getline(ss, substr, ',')){
+            parts.push_back(substr);
+        }
+
+        if(parts.empty()){
+            throw 2;
+        }
+
+        if(parts.size() != 3 && parts.size() != 4){
+            throw 2;
+        }
+        Course* course = new Course(parts[0].c_str(), parts[1], stoi(parts[2]), nullptr);
+        this->addCourse(course);
+
+        if(parts.size() == 4){
+            Course* storedCourse = findCourse(parts[0].c_str());
+            Professor* manager = dynamic_cast<Professor*>(findMember(parts[3].c_str()));
+            if(storedCourse != nullptr && manager != nullptr){
+                storedCourse->setCourseManager(manager);
+            }
+        }
+    }
+
+    ifstream fileIn4("ΕγγραφέςΦοιτητών.csv");
+    if(!fileIn4){
+        throw 1;
+    }
+
+    while(getline(fileIn4, line)){
+        stringstream ss(line);
+        string substr;
+        vector<string> parts;
+        while(getline(ss, substr, ',')){
+            parts.push_back(substr);
+        }
+
+        if(parts.empty()){
+            throw 2;
+        }
+
+        if(parts.size() != 2){
+            throw 2;
+        }
+        Student* student = dynamic_cast<Student*>(findMember(parts[0].c_str()));
+        Course* course = findCourse(parts[1].c_str());
+        if(student != nullptr && course != nullptr){
+            student->addCourse(course);
+        }
+    }
+
+    ifstream fileIn5("ΑναθέσειςΔιδασκαλίας.csv");
+    if(!fileIn5){
+        throw 1;
+    }
+
+    while(getline(fileIn5, line)){
+        stringstream ss(line);
+        string substr;
+        vector<string> parts;
+        while(getline(ss, substr, ',')){
+            parts.push_back(substr);
+        }
+
+        if(parts.empty()){
+            throw 2;
+        }
+
+        if(parts.size() != 2){
+            throw 2;
+        }
+        Professor* professor = dynamic_cast<Professor*>(findMember(parts[0].c_str()));
+        Course* course = findCourse(parts[1].c_str());
+        if(professor != nullptr && course != nullptr){
+            professor->addCourse(course);
         }
     }
 }
@@ -370,6 +499,14 @@ void Registry::printAllCourses() const{
         cout << "Μάθημα: " << courses[i]->getID() << ", " << courses[i]->getDescription()
              << ", εξάμηνο " << courses[i]->getSemester() << endl;
     }
+}
+
+const vector<Person*>& Registry::getMembers() const{
+    return this->uniMembers;
+}
+
+const vector<Course*>& Registry::getCourses() const{
+    return this->courses;
 }
 
 

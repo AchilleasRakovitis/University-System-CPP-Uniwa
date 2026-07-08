@@ -32,10 +32,12 @@ public:
     void unenrollStudentFromCourse(const char* studentID, const char* courseID);
     void assignProfessorToCourse(const char* professorID, const char* courseID);
     void unassignProfessorFromCourse(const char* professorID, const char* courseID);
-    void saveToCSV(const std::string& filename) const;
-    void loadFromCSV(const std::string& filename);
+    void saveToCSV() const;
+    void loadFromCSV();
     void printAllMembers() const;
     void printAllCourses() const;
+    const std::vector<Person*>& getMembers() const;
+    const::std::vector<Course*>& getCourses() const;
 };
 
 #endif

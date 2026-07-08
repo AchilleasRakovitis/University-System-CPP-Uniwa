@@ -46,10 +46,11 @@ void Student::addCourse(Course* course){
 }
 
 void Student::removeCourse(Course* course){
-    for(int i = 0; i < (int)coursesAttend.size(); i++){
+    bool found = false;
+    for(int i = 0; i < (int)coursesAttend.size() && !found; i++){
         if(coursesAttend[i] == course){
             coursesAttend.erase(coursesAttend.begin() + i);
-            break;
+            found = true;
         }
     }
 }
