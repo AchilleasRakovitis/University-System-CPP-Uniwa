@@ -1,3 +1,11 @@
+# compiled binaries
 *.exe
+*.out
+app
 test
-.vscode/
+
+# generated data files
+*.csv
+
+# submission archive
+*.zip
